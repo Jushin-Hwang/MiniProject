@@ -1,70 +1,20 @@
-# Getting Started with Create React App
+# 나만의 포트폴리오 앱 (최종)
+목적 : 기존의 투자 앱이나 포트폴리오 분석시트템은 일반적으로 기업에서 제안하는 포트폴리오를 선택한다. 이 시스템은 사용자 설문조사를 통해 투자성향을 분석하고 이를 기반으로 맞춤형 비율을 추천한다. 사용자가 주식의 비율을 직접 입력할 수 있어 더 높은 자유도를 제공하고, 추천 포트폴리오와 비율 조정을 통한 리스크 및 기대수익률을 최적화 할 수 있다.
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# 기술 스택
+DB : MySQL
+Frontend : React
+Backend : Python(Flask Server)
 
-## Available Scripts
+# 실행 전 확인해야 할 것
+1) MySQL이 현재 실행되고 있는가?
+2) 코드 내의 MySQL 설정이 본인의 설정과 일치하는가?
 
-In the project directory, you can run:
+# 실행방법
+1) (MySQL이 실행되고 있을 때) init_process.ipynb 파일을 실행한다. (DB 구축)
+2) Terminal에 접속한다.
+3) Server.py 파일이 들어있는 Directory로 이동한 후, 'python Server.py' 실행 (백엔드 서버가 실행된다.)
+4) 같은 폴더에서 'npm start'실행 (프론트엔드 서버가 실행된다.)
 
-### `npm start`
+- Made By 가천대학교 데이터처리프로그래밍 2반 12조 -
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
-
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)

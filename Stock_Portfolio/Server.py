@@ -1,22 +1,22 @@
+# import Module
+import pandas as pd
+import numpy as np
+
 from flask import Flask, jsonify, request
+from flask_cors import CORS  # CORS 추가
 
 import pymysql
 import pymysql.cursors
 from sqlalchemy import create_engine
 
-import pandas as pd
-import numpy as np
-
 from scipy.optimize import minimize
 import scipy.optimize as sco
 
-from flask_cors import CORS  # CORS 추가
-
+# Flask 서버 실행
 app = Flask(__name__)
 CORS(app)  # 모든 라우트에 CORS 허용
 
-# Create SQLAlchemy engine to connect to MySQL Database 
-
+# 데이터 불러오기
 engine = create_engine('mysql+pymysql://root:1234@127.0.0.1:3306/team_project') 
 
 stock_data = pd.read_sql_table('stock_data', con = engine)
@@ -59,6 +59,16 @@ def get_stock_info():
 daily_ret = stock_price.set_index(stock_price.columns[0]).loc['2019-01-01':]
 
 def get_avg_covmat(stocks) : # stocks : 종목(리스트), weights : 가중치(리스트)
+    """
+    종목별 기대수익률과 자산변 수익률의 공분산을 계산하는 함수
+    
+    Parameters :
+        stocks(array) : 각 종목의 이름
+        
+    Return :
+        covmat : 자산별 수익률의 공분산
+        avg_returns : 종목별 기대수익률
+    """
     
     universe = daily_ret[stocks]
     monthly_returns = universe.resample('ME').last().pct_change(1)
@@ -134,17 +144,12 @@ def get_portfolio_performance():
 
     return jsonify(result)
 
-# 비율 추천 함수
-# 1) 최대샤프지수
-# 목적함수인 (-) 샤프비율을 구하는 함수 
-
+# 비율 추천 함수 1) 최대샤프지수
 def sharpe_ratio(weight,returns,cov_mat,rf = 0.03):
     ret=np.sum(returns*weight)                            #  포트폴리오 기대수익률 
     std=np.sqrt(np.dot(weight.T,np.dot(cov_mat,weight)))   # 포트폴리오 리스크 (변동성)
     sharpe =-(ret-rf)/std                                 # 최소화--> 최대화 되므로 마이너스 붙인다.
     return sharpe
-    
-# (-)샤프비율을 최소화하기 위한 최적화 함수  = (+) 샤프비율을 최대화
 
 def mean_variance_optimization(stocks, returns,cov_mat,rf = 0.03):  # ( 포트폴리오 기대수익률, 공분산, 무위험이자율)
     num_assets=len(returns)
@@ -158,8 +163,7 @@ def mean_variance_optimization(stocks, returns,cov_mat,rf = 0.03):  # ( 포트�
 
     return round(Sharp_Allocation*100,2)  
 
-# 2) MVP
-# 자산별 리스크 기여도를 구하기 위한 함수
+# 비율 추천 함수 2) MVP
 
 def Risk_Contribution(weight,cov_mat) :
     # weight =np.array(weight)
@@ -196,9 +200,7 @@ def risk_parity_optimization(stocks, cov_mat):
  
     return  round(RP_Allocation*100,2)              
 
-# 3) Risk Parity
-# 포트폴리오 변동성 최소화를 위한 최적화 
-
+# 비율 추천 함수 3) Risk Parity
 def get_portf_vol(w, cov_mat):  
     return np.sqrt(np.dot(w.T, np.dot(cov_mat, w)))
 
@@ -228,7 +230,7 @@ def get_efficient_portfolio(stocks, tendency) :
         array_result = np.array(mean_variance_optimization(stocks, avg_return, covmat))
         flattened = [item[0] for item in array_result]
         return flattened
-    elif tendency == 1 :
+    elif tendency == 2 :
         array_result = np.array(minimum_variance_optimization(stocks, avg_return, covmat))
         flattened = [item[0] for item in array_result]
         return flattened
