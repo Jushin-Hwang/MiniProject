@@ -1,0 +1,12 @@
+.header {
+    background-color: #E3F2FD; /* 연한 하늘색 배경 */
+    color: black; /* 검정색 텍스트 */
+    padding: 15px 0; /* 상하 여백 */
+    text-align: center; /* 중앙 정렬 */
+  }
+  
+  .header-title {
+    font-size: 24px; /* 글씨 크기 */
+    font-weight: bold; /* 글씨 두께 */
+  }
+  

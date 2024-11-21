@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import SurveyForm from './components/SurveyForm';
+import Header from './Head';
 import './App.css';  // App.css 파일을 import합니다.
 
 const questions = [
@@ -125,8 +126,8 @@ function App() {
         alert('데이터 오류가 발생했습니다.');
       } else {
         // API 응답에서 기대수익률과 리스크 값을 받아서 상태 업데이트
-        setExpected(data.return);  // 기대수익률 값
-        setRisk(data.risk);              // 리스크 값
+        setExpected(roundToFourDecimal(data.return));  // 기대수익률 값
+        setRisk(roundToFourDecimal(data.risk));        // 리스크 값
         setError(null);  // 오류 상태 초기화
       }
     })
@@ -137,44 +138,49 @@ function App() {
 
   // 두 번째 테이블의 투자 비율을 표시할 함수
   const calculate2 = () => {
-    // Flask 서버에 종목 코드로 종목 정보를 요청하는 API 호출
+    if (tendency === null) {
+      alert("설문조사를 먼저 진행해주세요.");
+      setCurrentPage("survey"); // 설문조사 화면으로 전환
+      return; // 이후 코드를 실행하지 않음
+    }
+  
     let stocks = [];
-
     const rowsArray = Array.from(rows); // `rows`는 HTMLCollection이므로 배열로 변환
-
+  
     rowsArray.forEach(row => {
       stocks.push(row.name);
     });
-
+  
     fetch(`http://localhost:5000/api/get_efficient_portfolio_route?stocks=${stocks.join(',')}&tendency=${tendency}`)
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      return response.json();
-    })
-    .then(data => {
-      if (data.error) {
-        alert('데이터 오류가 발생했습니다.');
-      } else {
-        // API 응답에서 기대수익률과 리스크 값을 받아서 상태 업데이트
-        setExpected2(data.return);  // 기대수익률 값
-        setRisk2(data.risk);              // 리스크 값
-
-        // ratios 업데이트
-        if (data.weights && Array.isArray(data.weights)) {
-          setRatios(data.weights.map(weight => roundToFourDecimal(weight))); // 비율을 소수점 처리
-        } else {
-          console.error("weights 데이터가 유효하지 않습니다.", data.weights);
-          alert("적절한 투자 비율 데이터를 받지 못했습니다.");
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
         }
-        setError(null);  // 오류 상태 초기화
-      }
-    })
-    .catch(err => {
-      alert('오류가 발생했습니다.');
-    });  
+        return response.json();
+      })
+      .then(data => {
+        if (data.error) {
+          alert('데이터 오류가 발생했습니다.');
+        } else {
+          // API 응답에서 기대수익률과 리스크 값을 받아서 상태 업데이트
+          setExpected2(roundToFourDecimal(data.return));  // 기대수익률 값
+          setRisk2(roundToFourDecimal(data.risk));              // 리스크 값
+  
+          // ratios 업데이트
+          if (data.weights && Array.isArray(data.weights)) {
+            setRatios(data.weights.map(weight => roundToFourDecimal(weight))); // 비율을 소수점 처리
+          } else {
+            console.error("weights 데이터가 유효하지 않습니다.", data.weights);
+            alert("적절한 투자 비율 데이터를 받지 못했습니다.");
+          }
+          setError(null); // 오류 상태 초기화
+        }
+      })
+      .catch(err => {
+        alert('오류가 발생했습니다.');
+      });
   };
+  
 
   // 소수점 넷째 자리에서 반올림하는 함수
   const roundToFourDecimal = (value) => {
@@ -221,6 +227,7 @@ function App() {
 
   return (
     <div className="App">
+    <Header></Header>
       {currentPage === "main" && (
         <div>
           <table id="stockTable" border={1}>
@@ -326,11 +333,19 @@ function App() {
             <b>내가 좋아하는 주식</b> 포트폴리오의 위험도(리스크)는 <span>[{risk2}%]</span>입니다.
           </p>
           <button onClick={startSurvey}>내 투자성향 알아보기</button>
+          <p style={{ fontSize: '12px', color: 'gray', textAlign: 'center', marginTop: '20px' }}>
+          ★ 이 자료는 보조 지표일 뿐 실제 투자는 개인의 <b>책임</b> 입니다. ★<br />
+          ★ 안정 추구형이라고 해서 리스크가 가장 낮고 수익률이 높은 건 아닙니다. ★<br /><br />
+            
+            공격 추구형 = 최대 샤프지수 포트폴리오 // 위험 중립형 = 리스크 패리티 포트폴리오 // 안정 추구형 = 최소분산 포트폴리오<br />
+            을 참고하여 추천된 투자 비율 입니다.
+            </p>
         </div>
       )}
       {currentPage === "survey" && (
         <SurveyForm questions={questions} onAnswerChange={handleAnswerChange} onSubmit={handleSubmit} />
       )}
+       
     </div>
   );
 }
